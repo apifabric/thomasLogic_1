@@ -1,0 +1,333 @@
+about:
+  date: October 27, 2024 17:51:26
+  recent_changes: works with modified safrs-react-admin
+  version: 0.0.0
+api_root: '{http_type}://{swagger_host}:{port}/{api}'
+authentication: '{system-default}'
+info:
+  number_relationships: 10
+  number_tables: 12
+info_toggle_checked: true
+resources:
+  Customer:
+    attributes:
+    - label: ' name*'
+      name: name
+      required: true
+      search: true
+      sort: true
+    - name: credit_limit
+      required: true
+    - name: balance
+    - name: id
+    description: Stores customer information including credit limits and balances.
+    info_list: Stores customer information including credit limits and balances.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - customer_id
+      name: CustomerAddressList
+      resource: CustomerAddress
+    - direction: tomany
+      fks:
+      - customer_id
+      name: OrderList
+      resource: Order
+    type: Customer
+    user_key: name
+  CustomerAddress:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: customer_id
+      required: true
+    - name: address
+      required: true
+    description: Stores multiple addresses of a customer.
+    info_list: Stores multiple addresses of a customer.
+    tab_groups:
+    - direction: toone
+      fks:
+      - customer_id
+      name: customer
+      resource: Customer
+    type: CustomerAddress
+    user_key: id
+  Discount:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: product_id
+      required: true
+    - name: discount_rate
+      required: true
+    description: Contains information about discounts applicable to products.
+    info_list: Contains information about discounts applicable to products.
+    tab_groups:
+    - direction: toone
+      fks:
+      - product_id
+      name: product
+      resource: Product
+    type: Discount
+    user_key: id
+  Item:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: order_id
+      required: true
+    - name: product_id
+      required: true
+    - name: quantity
+      required: true
+    - name: unit_price
+      required: true
+    - name: amount
+    description: Details of items included in orders.
+    info_list: Details of items included in orders.
+    tab_groups:
+    - direction: toone
+      fks:
+      - order_id
+      name: order
+      resource: Order
+    - direction: toone
+      fks:
+      - product_id
+      name: product
+      resource: Product
+    type: Item
+    user_key: id
+  Order:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: customer_id
+      required: true
+    - name: order_date
+      type: DATETIME
+    - name: amount_total
+    - name: notes
+    - name: date_shipped
+      type: DATETIME
+    description: Stores order details including order date and notes.
+    info_list: Stores order details including order date and notes.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - order_id
+      name: ItemList
+      resource: Item
+    - direction: tomany
+      fks:
+      - order_id
+      name: ShipmentDetailList
+      resource: ShipmentDetail
+    - direction: toone
+      fks:
+      - customer_id
+      name: customer
+      resource: Customer
+    type: Order
+    user_key: id
+  PaymentMethod:
+    attributes:
+    - label: ' name*'
+      name: name
+      required: true
+      search: true
+      sort: true
+    - name: id
+    description: Stores payment methods available for customers.
+    info_list: Stores payment methods available for customers.
+    type: PaymentMethod
+    user_key: name
+  Product:
+    attributes:
+    - label: ' name*'
+      name: name
+      required: true
+      search: true
+      sort: true
+    - name: unit_price
+      required: true
+    - name: id
+    description: Stores product details including unit prices.
+    info_list: Stores product details including unit prices.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - product_id
+      name: DiscountList
+      resource: Discount
+    - direction: tomany
+      fks:
+      - product_id
+      name: ItemList
+      resource: Item
+    - direction: tomany
+      fks:
+      - product_id
+      name: PurchaseOrderItemList
+      resource: PurchaseOrderItem
+    type: Product
+    user_key: name
+  PurchaseOrder:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: supplier_id
+      required: true
+    - name: order_date
+      type: DATETIME
+    - name: received
+    description: Orders placed with suppliers to stock products.
+    info_list: Orders placed with suppliers to stock products.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - purchase_order_id
+      name: PurchaseOrderItemList
+      resource: PurchaseOrderItem
+    - direction: toone
+      fks:
+      - supplier_id
+      name: supplier
+      resource: Supplier
+    type: PurchaseOrder
+    user_key: id
+  PurchaseOrderItem:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: product_id
+      required: true
+    - name: purchase_order_id
+      required: true
+    - name: quantity
+      required: true
+    description: Details of items ordered in purchase orders.
+    info_list: Details of items ordered in purchase orders.
+    tab_groups:
+    - direction: toone
+      fks:
+      - product_id
+      name: product
+      resource: Product
+    - direction: toone
+      fks:
+      - purchase_order_id
+      name: purchase_order
+      resource: PurchaseOrder
+    type: PurchaseOrderItem
+    user_key: id
+  ShipmentDetail:
+    attributes:
+    - label: ' id*'
+      name: id
+      search: true
+      sort: true
+    - name: order_id
+      required: true
+    - name: shipper_id
+      required: true
+    - name: shipment_date
+      required: true
+      type: DATETIME
+    description: Details about shipments for orders.
+    info_list: Details about shipments for orders.
+    tab_groups:
+    - direction: toone
+      fks:
+      - order_id
+      name: order
+      resource: Order
+    - direction: toone
+      fks:
+      - shipper_id
+      name: shipper
+      resource: Shipper
+    type: ShipmentDetail
+    user_key: id
+  Shipper:
+    attributes:
+    - label: ' name*'
+      name: name
+      required: true
+      search: true
+      sort: true
+    - name: contact_info
+    - name: id
+    description: Information about shipping companies.
+    info_list: Information about shipping companies.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - shipper_id
+      name: ShipmentDetailList
+      resource: ShipmentDetail
+    type: Shipper
+    user_key: name
+  Supplier:
+    attributes:
+    - label: ' name*'
+      name: name
+      required: true
+      search: true
+      sort: true
+    - name: phone
+    - name: id
+    description: Information about suppliers who provide products.
+    info_list: Information about suppliers who provide products.
+    tab_groups:
+    - direction: tomany
+      fks:
+      - supplier_id
+      name: PurchaseOrderList
+      resource: PurchaseOrder
+    type: Supplier
+    user_key: name
+settings:
+  HomeJS: /admin-app/home.js
+  max_list_columns: 8
+  style_guide:
+    applicationLocales:
+    - en
+    - es
+    currency_symbol: $
+    currency_symbol_position: left
+    date_format: LL
+    decimal_max: '1000000000'
+    decimal_min: '0'
+    decimal_separator: .
+    detail_mode: tab
+    edit_on_mode: dblclick
+    exclude_listpicker: false
+    include_translation: 'false'
+    keycloak_client_id: alsclient
+    keycloak_realm: kcals
+    keycloak_url: http://localhost:8080
+    locale: en
+    max_decimal_digits: '4'
+    min_decimal_digits: '2'
+    new_mode: dialog
+    pick_style: list
+    row_height: small,
+    serviceType: OntimizeEE
+    startSessionPath: /auth/login
+    style: light
+    thousand_separator: ','
+    use_keycloak: 'false'
